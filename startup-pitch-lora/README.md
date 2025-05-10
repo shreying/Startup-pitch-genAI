@@ -2,103 +2,99 @@
 base_model: gpt2
 library_name: peft
 ---
+# Model Card for Startup Pitch Generator (LoRA fine-tuned GPT-2)
 
-# Model Card for Model ID
+This model is a fine-tuned version of `gpt2` using the LoRA method via the PEFT library. It is designed to generate startup pitch content given a prompt related to a business idea, product, or sector.
 
-<!-- Provide a quick summary of what the model is/does. -->
-
-
+---
 
 ## Model Details
 
 ### Model Description
 
-<!-- Provide a longer summary of what this model is. -->
+This GPT-2 based model has been fine-tuned using Parameter-Efficient Fine-Tuning (PEFT) techniques, specifically LoRA (Low-Rank Adaptation), on a dataset of curated startup pitches and business descriptions. It can assist entrepreneurs, students, and creators in generating structured pitch content for presentations, hackathons, or incubation programs.
 
+- **Developed by:** Shreya Sahu  
+- **Model type:** LoRA fine-tuned language model  
+- **Language(s):** English  
+- **License:** MIT  
+- **Finetuned from model:** [`gpt2`](https://huggingface.co/gpt2)
 
+### Model Sources
 
-- **Developed by:** [More Information Needed]
-- **Funded by [optional]:** [More Information Needed]
-- **Shared by [optional]:** [More Information Needed]
-- **Model type:** [More Information Needed]
-- **Language(s) (NLP):** [More Information Needed]
-- **License:** [More Information Needed]
-- **Finetuned from model [optional]:** [More Information Needed]
+- **Repository:** [https://github.com/shreying/Startup-pitch-genAI](https://github.com/shreying/Startup-pitch-genAI)
 
-### Model Sources [optional]
-
-<!-- Provide the basic links for the model. -->
-
-- **Repository:** [More Information Needed]
-- **Paper [optional]:** [More Information Needed]
-- **Demo [optional]:** [More Information Needed]
+---
 
 ## Uses
 
-<!-- Address questions around how the model is intended to be used, including the foreseeable users of the model and those affected by the model. -->
-
 ### Direct Use
 
-<!-- This section is for the model use without fine-tuning or plugging into a larger ecosystem/app. -->
+- Generate startup pitch ideas from short prompts
+- Expand brief product descriptions into structured presentations
+- Support brainstorming and content creation for entrepreneurial use cases
 
-[More Information Needed]
+### Downstream Use
 
-### Downstream Use [optional]
-
-<!-- This section is for the model use when fine-tuned for a task, or when plugged into a larger ecosystem/app -->
-
-[More Information Needed]
+- Integration into web tools for startup pitch assistance
+- Fine-tuning further for domain-specific applications (e.g., healthtech, edtech)
 
 ### Out-of-Scope Use
 
-<!-- This section addresses misuse, malicious use, and uses that the model will not work well for. -->
+- Not suitable for generating legally binding documents
+- Not intended for generating pitches without review or human supervision
 
-[More Information Needed]
+---
 
 ## Bias, Risks, and Limitations
 
-<!-- This section is meant to convey both technical and sociotechnical limitations. -->
-
-[More Information Needed]
+This model may reproduce biases present in startup-related training data (e.g., region or gender biases). It may sometimes hallucinate facts or make unrealistic business claims.
 
 ### Recommendations
 
-<!-- This section is meant to convey recommendations with respect to the bias, risk, and technical limitations. -->
+Review and edit generated content before use. Use it as a writing assistant rather than a sole content creator.
 
-Users (both direct and downstream) should be made aware of the risks, biases and limitations of the model. More information needed for further recommendations.
+---
 
 ## How to Get Started with the Model
 
-Use the code below to get started with the model.
+You can run the model using the following PEFT and Transformers setup:
 
-[More Information Needed]
+```python
+from transformers import GPT2Tokenizer, GPT2LMHeadModel
+from peft import PeftModel, PeftConfig
+
+config = PeftConfig.from_pretrained("path_to_lora_adapter")
+base_model = GPT2LMHeadModel.from_pretrained(config.base_model_name_or_path)
+model = PeftModel.from_pretrained(base_model, "path_to_lora_adapter")
+tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+
+input_text = "A wearable device that tracks hydration levels"
+inputs = tokenizer(input_text, return_tensors="pt")
+outputs = model.generate(**inputs, max_new_tokens=150)
+print(tokenizer.decode(outputs[0], skip_special_tokens=True))
+```
+
 
 ## Training Details
 
 ### Training Data
 
-<!-- This should link to a Dataset Card, perhaps with a short stub of information on what the training data is all about as well as documentation related to data pre-processing or additional filtering. -->
+JSONL file containing the pitches to specific prompts
 
-[More Information Needed]
 
 ### Training Procedure
 
-<!-- This relates heavily to the Technical Specifications. Content here should link to that section when it is relevant to the training procedure. -->
+Preprocessing
+- Tokenized using GPT-2 tokenizer
+- Cleaned for formatting consistency
 
-#### Preprocessing [optional]
+Training Hyperparameters
+- Precision: fp16 mixed precision
+- Epochs: 3
+- Batch size: 8
+- Learning rate: 5e-5
 
-[More Information Needed]
-
-
-#### Training Hyperparameters
-
-- **Training regime:** [More Information Needed] <!--fp32, fp16 mixed precision, bf16 mixed precision, bf16 non-mixed precision, fp16 non-mixed precision, fp8 mixed precision -->
-
-#### Speeds, Sizes, Times [optional]
-
-<!-- This section provides information about throughput, start/end time, checkpoint size if relevant, etc. -->
-
-[More Information Needed]
 
 ## Evaluation
 
@@ -108,95 +104,65 @@ Use the code below to get started with the model.
 
 #### Testing Data
 
-<!-- This should link to a Dataset Card if possible. -->
-
-[More Information Needed]
+Held-out subset of pitch prompts unseen during training.
 
 #### Factors
 
-<!-- These are the things the evaluation is disaggregating by, e.g., subpopulations or domains. -->
-
-[More Information Needed]
+- Prompt diversity (industry, length)
+- Coherence, relevance, business clarity
 
 #### Metrics
 
-<!-- These are the evaluation metrics being used, ideally with a description of why. -->
+- Manual evaluation (coherence, novelty)
+- Perplexity (optional)
 
-[More Information Needed]
 
 ### Results
 
-[More Information Needed]
+- Generates creative and structured pitch formats
+- Better than base GPT-2 on pitch-specific prompts
+
+
 
 #### Summary
 
 
-
-## Model Examination [optional]
-
-<!-- Relevant interpretability work for the model goes here -->
-
-[More Information Needed]
-
 ## Environmental Impact
 
-<!-- Total emissions (in grams of CO2eq) and additional considerations, such as electricity usage, go here. Edit the suggested text below accordingly -->
+- Hardware Type: NVIDIA T4 GPU (Google Colab)
+- Hours used: ~2 hours
+- Cloud Provider: Google
+- Compute Region: Asia-South1
+- Carbon Emitted: Minimal (low training duration and hardware)
 
 Carbon emissions can be estimated using the [Machine Learning Impact calculator](https://mlco2.github.io/impact#compute) presented in [Lacoste et al. (2019)](https://arxiv.org/abs/1910.09700).
 
-- **Hardware Type:** [More Information Needed]
-- **Hours used:** [More Information Needed]
-- **Cloud Provider:** [More Information Needed]
-- **Compute Region:** [More Information Needed]
-- **Carbon Emitted:** [More Information Needed]
+- **Hardware Type:** Single GPU (T4)
+- **Software:** Transformers, PEFT, Accelerate, PyTorch
 
-## Technical Specifications [optional]
-
-### Model Architecture and Objective
-
-[More Information Needed]
-
-### Compute Infrastructure
-
-[More Information Needed]
-
-#### Hardware
-
-[More Information Needed]
-
-#### Software
-
-[More Information Needed]
 
 ## Citation [optional]
 
-<!-- If there is a paper or blog post introducing the model, the APA and Bibtex information for that should go in this section. -->
 
 **BibTeX:**
 
-[More Information Needed]
+@misc{startup-pitch-genai,
+  author = {Shreya Sahu},
+  title = {LoRA Fine-Tuned GPT-2 for Startup Pitch Generation},
+  year = {2025},
+  howpublished = {\url{https://github.com/shreying/Startup-pitch-genAI}}
+}
 
-**APA:**
 
-[More Information Needed]
+## Model Card Authors 
 
-## Glossary [optional]
+Author: Shreya Sahu
+Email: sahush2004@gmail.com
+GitHub: shreying
 
-<!-- If relevant, include terms and calculations in this section that can help readers understand the model or model card. -->
 
-[More Information Needed]
-
-## More Information [optional]
-
-[More Information Needed]
-
-## Model Card Authors [optional]
-
-[More Information Needed]
-
-## Model Card Contact
-
-[More Information Needed]
 ### Framework versions
 
 - PEFT 0.15.2
+- Transformers 4.39+
+- PyTorch 2.x
