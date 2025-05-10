@@ -80,7 +80,9 @@ print(tokenizer.decode(outputs[0], skip_special_tokens=True))
 
 ### Training Data
 
-JSONL file containing the pitches to specific prompts
+JSONL file containing the pitches to specific prompts.
+You can find the dataset file [here](https://github.com/shreying/Startup-pitch-genAI/blob/main/startup_pitches.jsonl).
+
 
 
 ### Training Procedure
